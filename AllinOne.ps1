@@ -6,6 +6,7 @@
 param(
     [switch]$Export,
     [switch]$Import,
+    [switch]$Clear,
     [switch]$All,
     [switch]$Node,
     [switch]$Python,
@@ -18,7 +19,7 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-if (-not $Export -and -not $Import) {
+if (-not $Export -and -not $Import -and -not $Clear) {
     Write-Host "`n用法:" -ForegroundColor Yellow
     Write-Host "  AllinOne.ps1 -Export -All      导出全部"
     Write-Host "  AllinOne.ps1 -Export -Node     导出 npm"
@@ -31,12 +32,45 @@ if (-not $Export -and -not $Import) {
     Write-Host "  AllinOne.ps1 -Import -Python   导入 Python"
     Write-Host "  AllinOne.ps1 -Import -VSCode   导入 VSCode 扩展"
     Write-Host "  AllinOne.ps1 -Import -Claude   导入 Claude 插件"
-    Write-Host "  AllinOne.ps1 -Import -WSL      导入 WSL`n"
+    Write-Host "  AllinOne.ps1 -Import -WSL      导入 WSL"
+    Write-Host "  AllinOne.ps1 -Clear  -All      清除全部导出目录"
+    Write-Host "  AllinOne.ps1 -Clear  -Node     清除 npm"
+    Write-Host "  AllinOne.ps1 -Clear  -Python   清除 Python"
+    Write-Host "  AllinOne.ps1 -Clear  -VSCode   清除 VSCode 扩展"
+    Write-Host "  AllinOne.ps1 -Clear  -Claude   清除 Claude 插件"
+    Write-Host "  AllinOne.ps1 -Clear  -WSL      清除 WSL`n"
     exit 0
 }
 
 if (-not $All -and -not $Node -and -not $Python -and -not $VSCode -and -not $Claude -and -not $WSL) {
     Write-Host "`n请指定范围: -All / -Node / -Python / -VSCode / -Claude / -WSL`n" -ForegroundColor Yellow
+    exit 0
+}
+
+# ============================================
+# Clear
+# ============================================
+
+if ($Clear) {
+    Log "清除导出目录"
+
+    function Remove-ExportDir($name) {
+        $dir = Join-Path $scriptDir $name
+        if (Test-Path $dir) {
+            Remove-Item $dir -Recurse -Force
+            OK "已清除 $name/"
+        } else {
+            Skip "$name/ 不存在"
+        }
+    }
+
+    if ($All -or $Python)  { Remove-ExportDir "site-packages" }
+    if ($All -or $Node)    { Remove-ExportDir "npm" }
+    if ($All -or $VSCode)  { Remove-ExportDir "extensions" }
+    if ($All -or $Claude)  { Remove-ExportDir "claude-plugins" }
+    if ($All -or $WSL)     { Remove-ExportDir "wsl" }
+
+    OK "清除完成"
     exit 0
 }
 

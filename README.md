@@ -18,6 +18,14 @@
 | Claude 插件 | `-Claude` | 25 个官方插件（不含 API 配置） |
 | WSL 发行版 | `-WSL` | 默认 WSL 发行版完整导出 |
 
+## 三种模式
+
+| 模式 | 说明 |
+|------|------|
+| `-Export` | 从本机导出到 AllinOne 目录（在线机器使用） |
+| `-Import` | 从 AllinOne 目录导入到本机（离线机器使用） |
+| `-Clear` | 清除 AllinOne 目录下的导出文件，释放磁盘空间 |
+
 ## 快速开始
 
 ```powershell
@@ -191,6 +199,35 @@ powershell -ExecutionPolicy Bypass -File AllinOne.ps1 -Import -WSL
 - **目标**：`%USERPROFILE%\WSL\<发行版名>\`
 - **行为**：调用 `wsl --import` 从 `.tar` 文件导入，安装到用户目录下
 - **前提**：离线机器需已启用 WSL 功能
+
+---
+
+### 清除导出目录
+
+清除 AllinOne 目录下已导出的文件，释放磁盘空间。可以按组件单独清除，也可以一次性全部清除。
+
+```powershell
+# 清除全部导出目录
+powershell -ExecutionPolicy Bypass -File AllinOne.ps1 -Clear -All
+
+# 仅清除 npm
+powershell -ExecutionPolicy Bypass -File AllinOne.ps1 -Clear -Node
+
+# 仅清除 Python
+powershell -ExecutionPolicy Bypass -File AllinOne.ps1 -Clear -Python
+
+# 仅清除 VSCode 扩展
+powershell -ExecutionPolicy Bypass -File AllinOne.ps1 -Clear -VSCode
+
+# 仅清除 Claude 插件
+powershell -ExecutionPolicy Bypass -File AllinOne.ps1 -Clear -Claude
+
+# 仅清除 WSL
+powershell -ExecutionPolicy Bypass -File AllinOne.ps1 -Clear -WSL
+```
+
+- **行为**：直接删除对应的导出目录（`site-packages/`、`npm/`、`extensions/`、`claude-plugins/`、`wsl/`）
+- **注意**：清除后需要重新 `-Export` 才能再次导入
 
 ---
 
