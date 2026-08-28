@@ -1,0 +1,16 @@
+# Large binary directories
+npm/
+site-packages/
+installers/
+wsl/
+
+# VSCode extension binaries (keep extensions.txt)
+extensions/*.vsix
+
+# Claude plugin data (binary/cache)
+claude-plugins/.last_inuse_sweep
+
+# IDE / tool
+.vscode/
+.remember/
+*.code-workspace
